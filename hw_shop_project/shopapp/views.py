@@ -57,3 +57,9 @@ def delete_product(request, id):
     product = Product.objects.get(id=id)
     product.delete()
     return HttpResponse('Product deleted')
+
+
+def delete_order(request, id):
+    order = Order.objects.get(id=id)
+    order.delete()
+    return HttpResponse('Order deleted')
