@@ -31,3 +31,9 @@ class Order(models.Model):
 
     def __str__(self):
         return str(self.client)
+
+    def save(self, *args, **kwargs):
+        # Вычисляем общую сумму заказа только при обновлении существующего заказа
+        if self.pk:
+            self.total_sum = self.products.aggregate(total=models.Sum('price'))['total'] or 0
+        super().save(*args, **kwargs)

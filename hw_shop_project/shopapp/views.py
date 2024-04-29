@@ -1,4 +1,4 @@
-from django.db.models import Sum
+from django.shortcuts import get_object_or_404
 from django.http import HttpResponse
 from .models import Client, Product, Order
 from faker import Faker
@@ -25,6 +25,26 @@ def create_product(request):
     )
     product.save()
     return HttpResponse('Product created')
+
+
+def create_order(request, client_id, product_ids):
+    client = get_object_or_404(Client, id=client_id)
+    product_ids = product_ids.split(',')
+    products = Product.objects.filter(id__in=product_ids)
+
+    if products.count() != len(product_ids):
+        return HttpResponse('One or more products do not exist')
+
+    order = Order(client=client)
+    order.save()
+
+    for product in products:
+        order.products.add(product)
+
+    # Вызываем save() после добавления продуктов для обновления total_sum
+    order.save()
+
+    return HttpResponse(f'Order created for {client.name} with total sum {order.total_sum}')
 
 
 def delete_client(request, id):

@@ -1,5 +1,5 @@
-from . import views
 from django.urls import path
+from . import views
 
 urlpatterns = [
     path('', views.index, name='index'),
@@ -7,5 +7,5 @@ urlpatterns = [
     path('create_client/', views.create_client, name='create_client'),
     path('delete_product/<int:id>/', views.delete_product, name='delete_product'),
     path('delete_client/<int:id>/', views.delete_client, name='delete_client'),
-
+    path('create_order/<int:client_id>/<str:product_ids>/', views.create_order, name='create_order'),
 ]
