@@ -1,9 +1,16 @@
-from django.shortcuts import get_object_or_404
+from django.shortcuts import get_object_or_404, render
 from django.http import HttpResponse
+from django.db.models import Prefetch
 from .models import Client, Product, Order
 from faker import Faker
 import datetime
 
+
+# Создайте шаблон, который выводит список заказанных клиентом товаров из всех его заказов с сортировкой по времени:
+# — за последние 7 дней (неделю)
+# — за последние 30 дней (месяц)
+# — за последние 365 дней (год)
+# Товары в списке не должны повторятся
 
 def index(request):
     return HttpResponse("MyShop")
@@ -40,8 +47,6 @@ def create_order(request, client_id, product_ids):
 
     for product in products:
         order.products.add(product)
-
-    # Вызываем save() после добавления продуктов для обновления total_sum
     order.save()
 
     return HttpResponse(f'Order created for {client.name} with total sum {order.total_sum}')
@@ -63,3 +68,39 @@ def delete_order(request, id):
     order = Order.objects.get(id=id)
     order.delete()
     return HttpResponse('Order deleted')
+
+
+def orders_by_week(request, client_id):
+    client = get_object_or_404(Client, id=client_id)
+    orders = Order.objects.filter(client=client, date__gte=datetime.datetime.now() - datetime.timedelta(days=7))
+    products = Product.objects.filter(orders__in=orders).distinct().order_by('-orders__date')
+
+    prefetch_related_orders = Prefetch('orders', orders)
+    products = products.prefetch_related(prefetch_related_orders)
+
+    context = {'title': 'Заказы за неделю', 'client': client.name, 'products': products}
+    return render(request, 'shopapp/orders_by.html', context)
+
+
+def orders_by_month(request, client_id):
+    client = get_object_or_404(Client, id=client_id)
+    orders = Order.objects.filter(client=client, date__gte=datetime.datetime.now() - datetime.timedelta(days=30))
+    products = Product.objects.filter(orders__in=orders).distinct().order_by('-orders__date')
+
+    prefetch_related_orders = Prefetch('orders', orders)
+    products = products.prefetch_related(prefetch_related_orders)
+
+    context = {'title': 'Заказы за месяц', 'client': client.name, 'products': products}
+    return render(request, 'shopapp/orders_by.html', context)
+
+
+def orders_by_year(request, client_id):
+    client = get_object_or_404(Client, id=client_id)
+    orders = Order.objects.filter(client=client, date__gte=datetime.datetime.now() - datetime.timedelta(days=365))
+    products = Product.objects.filter(orders__in=orders).distinct().order_by('-orders__date')
+
+    prefetch_related_orders = Prefetch('orders', orders)
+    products = products.prefetch_related(prefetch_related_orders)
+
+    context = {'title': 'Заказы за год', 'client': client.name, 'products': products}
+    return render(request, 'shopapp/orders_by.html', context)
