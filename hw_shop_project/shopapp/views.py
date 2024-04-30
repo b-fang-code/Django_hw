@@ -79,7 +79,9 @@ def delete_order(request, id):
 
 
 def orders_by_week(request, client_id):
-    client = get_object_or_404(Client, id=client_id)
+    if client_id not in [client.id for client in Client.objects.all()]:
+        return HttpResponse('Клиента с таким id не существует в базе данных')
+    client = Client.objects.get(id=client_id)
     orders = Order.objects.filter(client=client, date__gte=datetime.datetime.now() - datetime.timedelta(days=7))
     products = Product.objects.filter(orders__in=orders).distinct().order_by('-orders__date')
 
@@ -91,7 +93,9 @@ def orders_by_week(request, client_id):
 
 
 def orders_by_month(request, client_id):
-    client = get_object_or_404(Client, id=client_id)
+    if client_id not in [client.id for client in Client.objects.all()]:
+        return HttpResponse('Клиента с таким id не существует в базе данных')
+    client = Client.objects.get(id=client_id)
     orders = Order.objects.filter(client=client, date__gte=datetime.datetime.now() - datetime.timedelta(days=30))
     products = Product.objects.filter(orders__in=orders).distinct().order_by('-orders__date')
 
@@ -103,7 +107,9 @@ def orders_by_month(request, client_id):
 
 
 def orders_by_year(request, client_id):
-    client = get_object_or_404(Client, id=client_id)
+    if client_id not in [client.id for client in Client.objects.all()]:
+        return HttpResponse('Клиента с таким id не существует в базе данных')
+    client = Client.objects.get(id=client_id)
     orders = Order.objects.filter(client=client, date__gte=datetime.datetime.now() - datetime.timedelta(days=365))
     products = Product.objects.filter(orders__in=orders).distinct().order_by('-orders__date')
 
