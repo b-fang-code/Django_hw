@@ -2,18 +2,26 @@ from django.shortcuts import get_object_or_404, render
 from django.http import HttpResponse
 from django.db.models import Prefetch
 from .models import Client, Product, Order
+from .forms import ChoiceForm
 from faker import Faker
 import datetime
 
 
-# Создайте шаблон, который выводит список заказанных клиентом товаров из всех его заказов с сортировкой по времени:
-# — за последние 7 дней (неделю)
-# — за последние 30 дней (месяц)
-# — за последние 365 дней (год)
-# Товары в списке не должны повторятся
-
 def index(request):
-    return HttpResponse("MyShop")
+    if request.method == 'POST':
+        form = ChoiceForm(request.POST)
+        if form.is_valid():
+            choice = form.cleaned_data['choice_period']
+            client_id = form.cleaned_data['client_id']
+            if choice == 'week':
+                return orders_by_week(request, client_id)
+            if choice == 'month':
+                return orders_by_month(request, client_id)
+            if choice == 'year':
+                return orders_by_year(request, client_id)
+    else:
+        form = ChoiceForm()
+    return render(request, 'shopapp/index.html', {'form': form})
 
 
 def create_client(request):

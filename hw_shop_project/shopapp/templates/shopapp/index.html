@@ -1,0 +1,12 @@
+{% extends 'shopapp/base.html' %}
+
+{% block title %}Выберите категорию{% endblock %}
+
+{% block content %}
+    <h2>Выберите Id клиента и период</h2>
+    <form method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <input type="submit" value="Submit">
+    </form>
+{% endblock %}
