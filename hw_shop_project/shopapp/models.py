@@ -6,7 +6,7 @@ class Client(models.Model):
     email = models.EmailField(max_length=100)
     phone = models.CharField(max_length=100)
     address = models.CharField(max_length=100)
-    date = models.DateField(auto_now_add=True)
+    date = models.DateField()
 
     def __str__(self):
         return self.name
@@ -18,6 +18,7 @@ class Product(models.Model):
     price = models.IntegerField()
     quantity = models.IntegerField()
     date = models.DateField(auto_now_add=True)
+    image = models.ImageField(null=True, blank=True)
 
     def __str__(self):
         return self.name

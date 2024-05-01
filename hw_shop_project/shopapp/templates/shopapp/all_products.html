@@ -1,0 +1,15 @@
+{% extends 'shopapp/base.html' %}
+
+{% block title %}Все продукты{% endblock %}
+
+{% block content %}
+    <h2>{{ title }}</h2>
+    <ul>
+        {% for product in products %}
+            <li> Id продукта: {{ product.id }}>>>>Название продукта: {{ product.name }}</li>
+            {% if product.image %}
+                <img src="{{ product.image.url }}" alt="{{ product.name }}">
+            {% endif %}
+        {% endfor %}
+    </ul>
+{% endblock %}

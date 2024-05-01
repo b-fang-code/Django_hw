@@ -2,11 +2,20 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <title>{% block title %}Заголовок{% endblock %}</title>
+    <title>{% block title %}Главная{% endblock %}</title>
 </head>
 <body>
+<h1>Главная</h1>
+<a href="{% url 'main' %}">Главная</a>
+<a href="{% url 'create_client' %}">Добавить клиента</a>
+<a href="{% url 'create_product' %}">Добавить продукт</a>
+<a href="{% url 'orders_by_period' %}">Заказы за период</a>
+<a href="{% url 'get_all_clients' %}">Все клиенты</a>
+<a href="{% url 'get_all_products' %}">Все продукты</a>
+<a href="{% url 'delete_product' %}">Удалить продукт</a>
+<a href="{% url 'delete_client' %}">Удалить клиента</a>
 {% block content %}
-    контент
+
 {% endblock %}
 </body>
 </html>
